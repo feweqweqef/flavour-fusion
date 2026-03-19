@@ -23,17 +23,21 @@ export default async function RecipePage({ params }: Props) {
 
   const { data: favourite } = user ? await supabase
     .from('favourites')
-    .select('id')
+    .select('id, collection_id')
     .eq('user_id', user.id)
     .eq('recipe_id', id)
     .single() : { data: null }
+
+  const { data: collections } = user ? await supabase
+    .from('collections')
+    .select('id, name')
+    .eq('user_id', user.id) : { data: [] }
 
   return (
     <main className="min-h-screen bg-gray-50">
       <Navbar />
       <div className="max-w-3xl mx-auto px-6 py-8">
 
-        {/* Image */}
         {recipe.image_url ? (
           <img src={recipe.image_url} alt={recipe.title}
             className="w-full h-72 object-cover rounded-xl mb-6" />
@@ -41,19 +45,14 @@ export default async function RecipePage({ params }: Props) {
           <div className="w-full h-72 bg-orange-50 rounded-xl mb-6 flex items-center justify-center text-6xl">🍽️</div>
         )}
 
-        {/* Header */}
         <div className="flex items-start justify-between mb-6">
           <div>
             <div className="flex items-center gap-2 mb-2">
               <span className="text-xs text-orange-500 font-medium uppercase tracking-wide">
                 {recipe.category}
               </span>
-              {recipe.cuisine && (
-                <span className="text-xs text-gray-400">· {recipe.cuisine}</span>
-              )}
-              {recipe.cooking_time && (
-                <span className="text-xs text-gray-400">· ⏱ {recipe.cooking_time} min</span>
-              )}
+              {recipe.cuisine && <span className="text-xs text-gray-400">· {recipe.cuisine}</span>}
+              {recipe.cooking_time && <span className="text-xs text-gray-400">· ⏱ {recipe.cooking_time} min</span>}
             </div>
             <h1 className="text-3xl font-bold text-gray-800">{recipe.title}</h1>
             <p className="text-sm text-gray-400 mt-1">by {recipe.profiles?.username}</p>
@@ -63,17 +62,17 @@ export default async function RecipePage({ params }: Props) {
               recipeId={id}
               userId={user.id}
               initialFavourited={!!favourite}
+              collections={collections || []}
+              initialCollectionId={favourite?.collection_id ?? null}
             />
           )}
         </div>
 
-        {/* Description */}
         {recipe.description && (
           <p className="text-gray-600 mb-8">{recipe.description}</p>
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Ingredients */}
           <div className="bg-white rounded-xl p-6 shadow-sm">
             <h2 className="text-lg font-semibold text-gray-800 mb-4">Ingredients</h2>
             <ul className="space-y-2">
@@ -86,7 +85,6 @@ export default async function RecipePage({ params }: Props) {
             </ul>
           </div>
 
-          {/* Instructions */}
           <div className="bg-white rounded-xl p-6 shadow-sm">
             <h2 className="text-lg font-semibold text-gray-800 mb-4">Instructions</h2>
             <ol className="space-y-3">
