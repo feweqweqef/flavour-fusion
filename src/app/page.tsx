@@ -1,6 +1,7 @@
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 import Navbar from '@/components/Navbar'
 import RecipeGrid from '@/components/RecipeGrid'
+import Chatbot from '@/components/Chatbot'
 
 export default async function HomePage() {
   const supabase = await createServerSupabaseClient()
@@ -22,6 +23,7 @@ export default async function HomePage() {
         </div>
         <RecipeGrid recipes={recipes || []} />
       </div>
+      <Chatbot />
     </main>
   )
 }

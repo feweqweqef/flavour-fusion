@@ -2,6 +2,7 @@ import { createServerSupabaseClient } from '@/lib/supabase-server'
 import Navbar from '@/components/Navbar'
 import { notFound } from 'next/navigation'
 import FavouriteButton from '@/components/FavouriteButton'
+import DeleteButton from '@/components/DeleteButton'
 
 type Props = {
   params: Promise<{ id: string }>
@@ -57,15 +58,21 @@ export default async function RecipePage({ params }: Props) {
             <h1 className="text-3xl font-bold text-gray-800">{recipe.title}</h1>
             <p className="text-sm text-gray-400 mt-1">by {recipe.profiles?.username}</p>
           </div>
-          {user && (
-            <FavouriteButton
-              recipeId={id}
-              userId={user.id}
-              initialFavourited={!!favourite}
-              collections={collections || []}
-              initialCollectionId={favourite?.collection_id ?? null}
-            />
-          )}
+
+          <div className="flex items-center gap-2">
+            {user && (
+              <FavouriteButton
+                recipeId={id}
+                userId={user.id}
+                initialFavourited={!!favourite}
+                collections={collections || []}
+                initialCollectionId={favourite?.collection_id ?? null}
+              />
+            )}
+            {user && user.id === recipe.user_id && (
+              <DeleteButton recipeId={id} />
+            )}
+          </div>
         </div>
 
         {recipe.description && (

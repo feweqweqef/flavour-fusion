@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import RecipeCard from './RecipeCard'
 
-const CATEGORIES = ['All', 'Chicken', 'Vegetarian', 'Pasta', 'Salad', 'Rice', 'Dessert', 'Soup']
+const CATEGORIES = ['All', 'Chicken', 'Beef', 'Seafood', 'Vegetarian', 'Pasta', 'Salad', 'Rice', 'Dessert', 'Soup','Snack']
 
 type Recipe = {
   id: string
@@ -20,14 +20,16 @@ export default function RecipeGrid({ recipes }: { recipes: Recipe[] }) {
   const [search, setSearch] = useState('')
   const [activeCategory, setActiveCategory] = useState('All')
 
-  const filtered = recipes.filter(r => {
-    const matchesSearch =
-      r.title.toLowerCase().includes(search.toLowerCase()) ||
-      r.description?.toLowerCase().includes(search.toLowerCase())
-    const matchesCategory =
-      activeCategory === 'All' || r.category === activeCategory
-    return matchesSearch && matchesCategory
-  })
+const filtered = recipes.filter(r => {
+  const matchesSearch =
+    r.title.toLowerCase().includes(search.toLowerCase()) ||
+    r.description?.toLowerCase().includes(search.toLowerCase()) ||
+    r.category?.toLowerCase().includes(search.toLowerCase()) ||
+    r.cuisine?.toLowerCase().includes(search.toLowerCase())
+  const matchesCategory =
+    activeCategory === 'All' || r.category === activeCategory
+  return matchesSearch && matchesCategory
+})
 
   return (
     <div>
