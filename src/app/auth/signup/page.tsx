@@ -24,6 +24,42 @@ export default function SignupPage() {
       return
     }
 
+    if (username.length > 20) {
+      setError('Username must be less than 20 characters')
+      setLoading(false)
+      return
+    }
+
+    if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+      setError('Username can only contain letters, numbers and underscores')
+      setLoading(false)
+      return
+    }
+
+    if (!email || !password) {
+      setError('Please fill in all fields')
+      setLoading(false)
+      return
+    }
+
+    if (password.length < 8) {
+      setError('Password must be at least 8 characters')
+      setLoading(false)
+      return
+    }
+
+    if (!/[A-Z]/.test(password)) {
+      setError('Password must contain at least one uppercase letter')
+      setLoading(false)
+      return
+    }
+
+    if (!/[0-9]/.test(password)) {
+      setError('Password must contain at least one number')
+      setLoading(false)
+      return
+    }
+
     const { error: signUpError } = await supabase.auth.signUp({
       email,
       password,
@@ -61,6 +97,7 @@ export default function SignupPage() {
             <input type="text" value={username} onChange={e => setUsername(e.target.value)}
               className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
               placeholder="flavourlover99" />
+            <p className="text-xs text-gray-400 mt-1">3–20 characters, letters/numbers/underscores only</p>
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
@@ -73,6 +110,7 @@ export default function SignupPage() {
             <input type="password" value={password} onChange={e => setPassword(e.target.value)}
               className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
               placeholder="••••••••" />
+            <p className="text-xs text-gray-400 mt-1">Min 8 characters, one uppercase letter, one number</p>
           </div>
           <button onClick={handleSignup} disabled={loading}
             className="w-full bg-orange-500 hover:bg-orange-600 text-white font-medium py-2 rounded-lg transition disabled:opacity-50">
