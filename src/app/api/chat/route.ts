@@ -28,6 +28,8 @@ Guidelines:
 - Give cooking tips and food advice
 - Keep responses concise and friendly
 - If someone asks what recipes are available, list them clearly
+- Format the message nicely and neatly
+- Don't let your response be too long
 - If they ask something irrelevant to food, politely say you can only help with food and recipes`
 
 const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
@@ -37,7 +39,7 @@ const response = await fetch('https://api.groq.com/openai/v1/chat/completions', 
     'Content-Type': 'application/json',
   },
   body: JSON.stringify({
-    model: 'llama-3.1-8b-instant', // ✅ FIXED
+    model: 'llama-3.1-8b-instant', // FIXED
     messages: [
       { role: 'system', content: systemPrompt },
       ...(history || []),

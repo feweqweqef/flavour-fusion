@@ -3,6 +3,7 @@ import Navbar from '@/components/Navbar'
 import { notFound } from 'next/navigation'
 import FavouriteButton from '@/components/FavouriteButton'
 import DeleteButton from '@/components/DeleteButton'
+import RecipeRecommendations from '@/components/RecipeRecommendations'
 
 type Props = {
   params: Promise<{ id: string }>
@@ -106,6 +107,10 @@ export default async function RecipePage({ params }: Props) {
             </ol>
           </div>
         </div>
+
+        {/* NEW: Recommendations section */}
+        <RecipeRecommendations recipeId={id} />
+
       </div>
     </main>
   )
