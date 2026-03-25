@@ -29,7 +29,7 @@ Guidelines:
 - Keep responses concise and friendly
 - If someone asks what recipes are available, list them clearly
 - Format the message nicely and neatly
-- Don't let your response be too long
+- Do not exceed a 100 words
 - If they ask something irrelevant to food, politely say you can only help with food and recipes`
 
 const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
@@ -46,7 +46,7 @@ const response = await fetch('https://api.groq.com/openai/v1/chat/completions', 
       { role: 'user', content: message }
     ],
     temperature: 0.7,
-    max_tokens: 300,
+    max_tokens: 100,
   })
 })
 

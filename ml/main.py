@@ -43,16 +43,17 @@ def recommend(req: RecommendRequest):
         return {"recommendations": []}
 
     # 2. turn each recipe into text
+    # repeat category and cuisine to give them more weight in similarity scoring
     def build_text(r):
         ingredients = " ".join(r.get("ingredients") or [])
         category = r.get("category") or ""
         cuisine = r.get("cuisine") or ""
-        return f"{ingredients} {category} {cuisine}".lower()
+        return f"{ingredients} {category} {category} {category} {cuisine} {cuisine}".lower()
 
     texts = [build_text(r) for r in recipes]
     ids = [r["id"] for r in recipes]
 
-    # 3. vectorise
+    # 3. vectorise using TF-IDF
     vectoriser = TfidfVectorizer(stop_words="english")
     matrix = vectoriser.fit_transform(texts)
 
@@ -62,14 +63,14 @@ def recommend(req: RecommendRequest):
 
     idx = ids.index(req.recipe_id)
 
-    # 5. similarity
+    # 5. compute cosine similarity against all recipes
     scores = cosine_similarity(matrix[idx], matrix).flatten()
 
-    # 6. rank
+    # 6. rank by score, exclude the recipe itself
     sorted_idx = np.argsort(scores)[::-1]
     sorted_idx = [i for i in sorted_idx if i != idx]
 
-    # 7. return top N
+    # 7. return top N only if similarity is meaningful (above 5% threshold)
     top = sorted_idx[:req.top_n]
 
     recommendations = [
@@ -79,6 +80,7 @@ def recommend(req: RecommendRequest):
             "score": round(float(scores[i]), 3)
         }
         for i in top
+        if scores[i] > 0.05
     ]
 
     return {"recommendations": recommendations}

@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 import FavouriteButton from '@/components/FavouriteButton'
 import DeleteButton from '@/components/DeleteButton'
 import RecipeRecommendations from '@/components/RecipeRecommendations'
+import CommentsSection from '@/components/CommentsSection'
 
 type Props = {
   params: Promise<{ id: string }>
@@ -34,6 +35,12 @@ export default async function RecipePage({ params }: Props) {
     .from('collections')
     .select('id, name')
     .eq('user_id', user.id) : { data: [] }
+
+  const { data: comments } = await supabase
+    .from('comments')
+    .select('*, profiles(username)')
+    .eq('recipe_id', id)
+    .order('created_at', { ascending: true })
 
   return (
     <main className="min-h-screen bg-gray-50">
@@ -108,8 +115,15 @@ export default async function RecipePage({ params }: Props) {
           </div>
         </div>
 
-        {/* NEW: Recommendations section */}
+        {/* Recommendations section */}
         <RecipeRecommendations recipeId={id} />
+
+        {/* Comments section */}
+        <CommentsSection
+          recipeId={id}
+          initialComments={comments || []}
+          currentUserId={user?.id ?? null}
+        />
 
       </div>
     </main>

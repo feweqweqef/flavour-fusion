@@ -65,6 +65,11 @@ export default function LoginPage() {
               placeholder="••••••••" 
             />
           </div>
+          <div className="flex justify-end">
+  <Link href="/auth/reset" className="text-xs text-orange-500 hover:underline">
+    Forgot password?
+  </Link>
+</div>
           <button onClick={handleLogin} disabled={loading}
             className="w-full bg-orange-500 hover:bg-orange-600 text-white font-medium py-2 rounded-lg transition disabled:opacity-50">
             {loading ? 'Logging in...' : 'Log in'}
