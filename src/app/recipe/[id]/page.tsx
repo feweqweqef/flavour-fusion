@@ -1,6 +1,7 @@
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 import Navbar from '@/components/Navbar'
 import { notFound } from 'next/navigation'
+import Link from 'next/link'
 import FavouriteButton from '@/components/FavouriteButton'
 import DeleteButton from '@/components/DeleteButton'
 import RecipeRecommendations from '@/components/RecipeRecommendations'
@@ -76,6 +77,12 @@ export default async function RecipePage({ params }: Props) {
                 collections={collections || []}
                 initialCollectionId={favourite?.collection_id ?? null}
               />
+            )}
+            {user && user.id === recipe.user_id && (
+              <Link href={`/recipe/${id}/edit`}
+                className="text-sm text-gray-500 hover:text-orange-500 hover:bg-orange-50 px-3 py-2 rounded-lg transition">
+                ✏️ Edit
+              </Link>
             )}
             {user && user.id === recipe.user_id && (
               <DeleteButton recipeId={id} />
