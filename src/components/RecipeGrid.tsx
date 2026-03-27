@@ -1,10 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import RecipeCard from './RecipeCard'
 
 const CATEGORIES = ['All', 'Chicken', 'Beef', 'Seafood', 'Vegetarian', 'Pasta', 'Salad', 'Rice', 'Dessert', 'Soup', 'Snack']
-const PAGE_SIZE = 6
 
 type Recipe = {
   id: string
@@ -17,36 +16,22 @@ type Recipe = {
   profiles: { username: string }
 }
 
-export default function RecipeGrid({ recipes: initialRecipes, totalCount }: { recipes: Recipe[], totalCount: number }) {
-  const [recipes, setRecipes] = useState<Recipe[]>(initialRecipes)
+export default function RecipeGrid({ recipes }: { recipes: Recipe[] }) {
   const [search, setSearch] = useState('')
   const [activeCategory, setActiveCategory] = useState('All')
-  const [loading, setLoading] = useState(false)
-  const [offset, setOffset] = useState(PAGE_SIZE)
 
-  const hasMore = offset < totalCount
-
-  async function loadMore() {
-    setLoading(true)
-
-    const response = await fetch(`/api/recipes?offset=${offset}&limit=${PAGE_SIZE}`)
-    const data = await response.json()
-
-    setRecipes(prev => [...prev, ...data.recipes])
-    setOffset(prev => prev + PAGE_SIZE)
-    setLoading(false)
-  }
-
-  const filtered = recipes.filter(r => {
-    const matchesSearch =
-      r.title.toLowerCase().includes(search.toLowerCase()) ||
-      r.description?.toLowerCase().includes(search.toLowerCase()) ||
-      r.category?.toLowerCase().includes(search.toLowerCase()) ||
-      r.cuisine?.toLowerCase().includes(search.toLowerCase())
-    const matchesCategory =
-      activeCategory === 'All' || r.category === activeCategory
-    return matchesSearch && matchesCategory
-  })
+  const filtered = useMemo(() => {
+    return recipes.filter(r => {
+      const matchesSearch = !search ||
+        r.title?.toLowerCase().includes(search.toLowerCase()) ||
+        r.description?.toLowerCase().includes(search.toLowerCase()) ||
+        r.category?.toLowerCase().includes(search.toLowerCase()) ||
+        r.cuisine?.toLowerCase().includes(search.toLowerCase())
+      const matchesCategory =
+        activeCategory === 'All' || r.category === activeCategory
+      return matchesSearch && matchesCategory
+    })
+  }, [recipes, search, activeCategory])
 
   return (
     <div>
@@ -81,19 +66,6 @@ export default function RecipeGrid({ recipes: initialRecipes, totalCount }: { re
           {filtered.map(recipe => (
             <RecipeCard key={recipe.id} recipe={recipe} />
           ))}
-        </div>
-      )}
-
-      {/* Load more button */}
-      {hasMore && !search && activeCategory === 'All' && (
-        <div className="text-center mt-10">
-          <button
-            onClick={loadMore}
-            disabled={loading}
-            className="bg-white border border-gray-300 text-gray-600 hover:border-orange-400 hover:text-orange-500 px-8 py-3 rounded-full text-sm font-medium transition disabled:opacity-50"
-          >
-            {loading ? 'Loading...' : `Load more recipes`}
-          </button>
         </div>
       )}
     </div>

@@ -10,11 +10,6 @@ export default async function HomePage() {
     .from('recipes')
     .select(`*, profiles(username)`)
     .order('created_at', { ascending: false })
-    .range(0, 5) // only fetch first 6
-
-  const { count } = await supabase
-    .from('recipes')
-    .select('*', { count: 'exact', head: true })
 
   return (
     <main className="min-h-screen bg-gray-50">
@@ -24,7 +19,7 @@ export default async function HomePage() {
           <h1 className="text-3xl font-bold text-gray-800">Discover Recipes</h1>
           <p className="text-gray-500 mt-1">Find your next favourite meal</p>
         </div>
-        <RecipeGrid recipes={recipes || []} totalCount={count || 0} />
+        <RecipeGrid recipes={recipes || []} />
       </div>
       <Chatbot />
     </main>
