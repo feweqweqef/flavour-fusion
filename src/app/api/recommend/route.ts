@@ -8,7 +8,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    const res = await fetch('http://127.0.0.1:8000/recommend', {
+    const res = await fetch('https://flavour-fusion-ww5u.onrender.com/recommend', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ recipe_id, top_n: 4 })
